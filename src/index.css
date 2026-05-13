@@ -1,0 +1,191 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #111827;
+  background-color: #f3f4f6;
+  line-height: 1.4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.card {
+  width: min(520px, 100%);
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+}
+
+.subtitle {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #4b5563;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  font-size: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+button {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.info {
+  color: #1d4ed8;
+  margin-top: 0.9rem;
+}
+
+.error {
+  color: #b91c1c;
+  margin-top: 0.9rem;
+}
+
+.result {
+  margin-top: 1rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 0.85rem;
+}
+
+.price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0.35rem 0;
+}
+
+.meta {
+  margin: 0;
+  color: #6b7280;
+}
+
+.nearby-section {
+  margin-top: 1rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 0.85rem;
+  border: 1px solid #e2e8f0;
+}
+
+.nearby-heading {
+  margin: 0 0 0.65rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.stations-empty {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.station-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.station-item {
+  padding: 0.65rem 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.station-item:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.station-name {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.2rem;
+}
+
+.station-address {
+  font-size: 0.9rem;
+  color: #4b5563;
+  line-height: 1.35;
+}
+
+.station-price {
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+/* --- Leaflet map (react-leaflet): needs explicit height so tiles render --- */
+.map-section {
+  margin-top: 1rem;
+}
+
+.map-hint {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.map-busy {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+.map-container-wrap {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.station-leaflet-map {
+  height: 280px;
+  width: 100%;
+  z-index: 0;
+}
+
+.leaflet-popup-content {
+  margin: 10px 12px;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
