@@ -3,7 +3,6 @@ import { getaveragegasprice, searchStationsInMapArea } from "./agent/gasPriceAge
 import StationMap from "./components/StationMap.jsx";
 import {
   getStationName,
-  getStationPrice,
   getStationStreetAddress
 } from "./utils/stationDisplay";
 
@@ -55,7 +54,7 @@ function App() {
   /**
    * Called by the map after the user pans or zooms (debounced in StationMap).
    * Re-queries TomTom for gas stations near the new map center / radius, then re-applies
-   * CollectAPI prices for the same ZIP the user originally searched.
+   * Apify dataset prices for the same ZIP (from GET dataset items only).
    */
   const handleMapViewportSearch = useCallback(
     async ({ lat, lng, radiusMeters }) => {
@@ -67,8 +66,7 @@ function App() {
           zip,
           lat,
           lng,
-          radiusMeters,
-          result?.stateCode ?? ""
+          radiusMeters
         );
         setResult((prev) => (prev ? { ...prev, ...partial } : prev));
       } catch (err) {
@@ -77,7 +75,7 @@ function App() {
         setMapAreaBusy(false);
       }
     },
-    [status, zip, result?.stateCode]
+    [status, zip]
   );
 
   return (
@@ -86,7 +84,8 @@ function App() {
         <h1>Yorky Gas Price Agent</h1>
 
         <p className="subtitle">
-          Enter a ZIP code for live regular gas prices and nearby stations.
+          Enter a ZIP for nearby stations (TomTom). Prices use your Apify dataset when available;
+          otherwise you will see demo estimates.
         </p>
 
         <form
@@ -124,15 +123,35 @@ function App() {
           <>
             {/* --- ZIP-level average regular price + how many stations we show --- */}
             <div className="result">
+              <p
+                className={`pricing-banner ${
+                  result.pricingSource === "live"
+                    ? "pricing-banner--live"
+                    : "pricing-banner--demo"
+                }`}
+              >
+                {result.pricingSource === "live" ? (
+                  <strong>Live prices</strong>
+                ) : (
+                  <>
+                    <strong>Demo estimated prices.</strong> Live pricing unavailable for this ZIP,
+                    showing demo estimates. ZIP code <strong>11507</strong> has live pricing—try that ZIP
+                    to see live Apify data.
+                  </>
+                )}
+              </p>
               <p>
-                Average regular gas price in <strong>{result.zip}</strong>:
+                Average regular gas price in <strong>{result.zip}</strong> (
+                {result.pricingSource === "live" ? "live" : "demo estimated"}):
               </p>
               <p className="price">
-                ${result.averagePrice.toFixed(2)} / gallon
+                {typeof result.averagePrice === "number" && Number.isFinite(result.averagePrice)
+                  ? `$${result.averagePrice.toFixed(2)} / gallon`
+                  : "—"}
               </p>
               <p className="meta">
                 Based on {result.stationCount} station
-                {result.stationCount === 1 ? "" : "s"} in the current map view with prices for ZIP {result.zip}.
+                {result.stationCount === 1 ? "" : "s"} in the current map view for ZIP {result.zip}.
               </p>
             </div>
 
@@ -144,12 +163,20 @@ function App() {
                 stations={result.stations}
                 onViewportSearch={handleMapViewportSearch}
                 mapAreaBusy={mapAreaBusy}
+                pricingSource={result.pricingSource ?? "live"}
               />
             )}
 
             {/* --- Text list of nearby stations from TomTom --- */}
             <div className="nearby-section">
-              <h2 className="nearby-heading">Nearby Gas Stations</h2>
+              <h2 className="nearby-heading">
+                Nearby Gas Stations
+                {result.pricingSource === "live" ? (
+                  <span className="nearby-sub"> — Live prices</span>
+                ) : (
+                  <span className="nearby-sub"> — Demo estimated prices</span>
+                )}
+              </h2>
               {!result.stations || result.stations.length === 0 ? (
                 <p className="stations-empty">No nearby stations found.</p>
               ) : (
@@ -163,9 +190,14 @@ function App() {
                       <div className="station-address">
                         {getStationStreetAddress(station)}
                       </div>
-                      {getStationPrice(station) != null && (
+                      {typeof station.regularPrice === "number" &&
+                        Number.isFinite(station.regularPrice) && (
                         <div className="station-price">
-                          Regular: ${getStationPrice(station).toFixed(2)} / gal
+                          {result.pricingSource === "demo" || station.isDemoEstimate ? (
+                            <>Demo estimate: ${station.regularPrice.toFixed(2)} / gal</>
+                          ) : (
+                            <>Live regular: ${station.regularPrice.toFixed(2)} / gal</>
+                          )}
                         </div>
                       )}
                     </li>

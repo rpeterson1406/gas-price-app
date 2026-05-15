@@ -10,7 +10,6 @@ import {
 } from "react-leaflet";
 import {
   getStationName,
-  getStationPrice,
   getStationStreetAddress
 } from "../utils/stationDisplay";
 
@@ -108,7 +107,8 @@ export default function StationMap({
   stations,
   mapKey,
   onViewportSearch,
-  mapAreaBusy
+  mapAreaBusy,
+  pricingSource = "live"
 }) {
   const center = [mapCenter.lat, mapCenter.lon];
   const validStations = (stations || []).filter((s) => getStationPosition(s) !== null);
@@ -116,9 +116,12 @@ export default function StationMap({
   return (
     <div className="map-section">
       <h2 className="nearby-heading">Station map</h2>
+      <p className="map-pricing-label">
+        {pricingSource === "live" ? "Live prices" : "Demo estimated prices"}
+      </p>
       <p className="map-hint">
-        Pan or zoom the map — stations and prices update for the area you are viewing (same ZIP
-        prices from CollectAPI, new locations from TomTom).
+        Pan or zoom the map — station locations update for the area you view (TomTom). ZIP-level
+        prices stay tied to your search ZIP (Apify dataset items from your actor run).
       </p>
       {mapAreaBusy && (
         <p className="map-busy" role="status">
@@ -159,10 +162,11 @@ export default function StationMap({
                   <strong>{getStationName(station)}</strong>
                   <br />
                   {getStationStreetAddress(station)}
-                  {getStationPrice(station) != null && (
+                  {typeof station.regularPrice === "number" &&
+                    Number.isFinite(station.regularPrice) && (
                     <>
                       <br />
-                      Regular: ${getStationPrice(station).toFixed(2)}/gal
+                      {`${pricingSource === "live" ? "Live" : "Demo estimate"}: $${station.regularPrice.toFixed(2)}/gal`}
                     </>
                   )}
                 </Popup>

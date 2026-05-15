@@ -93,9 +93,24 @@ button:disabled {
   margin: 0.35rem 0;
 }
 
-.meta {
-  margin: 0;
-  color: #6b7280;
+.pricing-banner {
+  margin: 0 0 0.65rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.pricing-banner--live {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e3a5f;
+}
+
+.pricing-banner--demo {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #78350f;
 }
 
 .nearby-section {
@@ -111,6 +126,12 @@ button:disabled {
   font-size: 1.05rem;
   font-weight: 700;
   color: #111827;
+}
+
+.nearby-sub {
+  font-weight: 500;
+  font-size: 0.92rem;
+  color: #6b7280;
 }
 
 .stations-empty {
@@ -163,6 +184,13 @@ button:disabled {
   margin: 0 0 0.5rem;
   font-size: 0.9rem;
   color: #6b7280;
+}
+
+.map-pricing-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e40af;
 }
 
 .map-busy {

@@ -1,6 +1,6 @@
 /**
  * Shared helpers for station list + map popups.
- * Supports merged TomTom+API rows ({ name, address, price }) and raw TomTom results.
+ * Merged TomTom + Apify rows use regularPrice (positive cash, else positive credit); raw TomTom has neither.
  */
 export function getStationName(station) {
   if (typeof station?.name === "string" && station.name.trim()) {
@@ -24,11 +24,4 @@ export function getStationStreetAddress(station) {
     addr.countrySubdivision
   ].filter(Boolean);
   return parts.length ? parts.join(", ") : "Address not available";
-}
-
-/** Regular price when present on merged station objects. */
-export function getStationPrice(station) {
-  const p = station?.price;
-  if (typeof p === "number" && Number.isFinite(p)) return p;
-  return null;
 }
