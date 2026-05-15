@@ -4,6 +4,40 @@ import {
   datasetItemsForZip
 } from "../src/lib/apifyDatasetNormalize.js";
 
+export function normalizeApifyToken(raw) {
+  let s = String(raw ?? "")
+    .replace(/^\uFEFF/, "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "")
+    .split("\n")[0]
+    .replace(/[\u200B-\u200D\u2060\uFEFF]/g, "")
+    .trim();
+  if (
+    (s.startsWith('"') && s.endsWith('"') && s.length >= 2) ||
+    (s.startsWith("'") && s.endsWith("'") && s.length >= 2)
+  ) {
+    s = s.slice(1, -1).trim();
+  }
+  return s.replace(/^bearer\s+/i, "").trim();
+}
+
+/**
+ * Options for handleGasPricesApiRequest from process.env (Vercel) or merged env (Vite).
+ * @param {Record<string, string | undefined>} [env]
+ */
+export function getGasPricesHandlerOptionsFromEnv(env = process.env) {
+  const APIFY_API_TOKEN = normalizeApifyToken(
+    env.APIFY_API_TOKEN || env.VITE_APIFY_API_TOKEN
+  );
+  const datasetId = String(env.VITE_APIFY_DATASET_ID ?? "").trim();
+  const queryRaw = env.APIFY_TOKEN_IN_QUERY;
+  const useQueryToken =
+    queryRaw === undefined || queryRaw === ""
+      ? false
+      : String(queryRaw).toLowerCase().trim() === "true" || String(queryRaw).trim() === "1";
+  return { datasetId, token: APIFY_API_TOKEN, useQueryToken };
+}
+
 function wantsDebug(searchParams) {
   const v = (searchParams.get("debug") || "").trim().toLowerCase();
   return v === "1" || v === "true" || v === "yes";
@@ -99,7 +133,7 @@ export async function handleGasPricesApiRequest(req, { datasetId, token, useQuer
       status: 500,
       body: {
         error:
-          "VITE_APIFY_DATASET_ID is missing. Set it in .env next to vite.config.js from your Apify dataset URL."
+          "VITE_APIFY_DATASET_ID is missing. Set it in Vercel project Environment Variables (or .env for local dev)."
       }
     };
   }
@@ -109,7 +143,7 @@ export async function handleGasPricesApiRequest(req, { datasetId, token, useQuer
       status: 500,
       body: {
         error:
-          "APIFY_API_TOKEN is missing on the server. Add it to .env (not VITE_) next to vite.config.js and restart npm run dev."
+          "APIFY_API_TOKEN is missing on the server. Add it in Vercel Environment Variables (not VITE_) or .env for local dev, then redeploy / restart dev."
       }
     };
   }

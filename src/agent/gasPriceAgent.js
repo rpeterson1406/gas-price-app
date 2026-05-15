@@ -11,7 +11,7 @@ const DEMO_PRICE_MIN = 3.15;
 const DEMO_PRICE_MAX = 4.75;
 
 /**
- * Gas prices: GET /api/gas-prices?zip= (Vite dev server only).
+ * Gas prices: GET /api/gas-prices?zip= (Vite dev middleware or Vercel serverless).
  * The server uses APIFY_API_TOKEN + VITE_APIFY_DATASET_ID and Apify dataset items;
  * the browser never sees the token.
  */
