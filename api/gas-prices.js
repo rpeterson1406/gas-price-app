@@ -1,10 +1,7 @@
-import {
-  getGasPricesHandlerOptionsFromEnv,
-  handleGasPricesApiRequest
-} from "../server/gasPricesApi.mjs";
-
 /**
  * Vercel serverless: GET /api/gas-prices?zip=12345
+ * Gas pricing now uses deterministic demo estimates in the frontend, so this
+ * route intentionally does not call Apify.
  * Default export is the Node request handler (req, res).
  */
 export default async function handler(req, res) {
@@ -16,13 +13,11 @@ export default async function handler(req, res) {
     return;
   }
 
-  const url = req.url || "/";
-  const result = await handleGasPricesApiRequest(
-    { url },
-    getGasPricesHandlerOptionsFromEnv()
-  );
-
-  res.statusCode = result.status;
+  res.statusCode = 410;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
-  res.end(JSON.stringify(result.body));
+  res.end(
+    JSON.stringify({
+      error: "Live gas pricing API is disabled. The app uses demo estimated prices."
+    })
+  );
 }

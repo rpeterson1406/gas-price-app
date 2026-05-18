@@ -107,8 +107,7 @@ export default function StationMap({
   stations,
   mapKey,
   onViewportSearch,
-  mapAreaBusy,
-  pricingSource = "live"
+  mapAreaBusy
 }) {
   const center = [mapCenter.lat, mapCenter.lon];
   const validStations = (stations || []).filter((s) => getStationPosition(s) !== null);
@@ -116,12 +115,10 @@ export default function StationMap({
   return (
     <div className="map-section">
       <h2 className="nearby-heading">Station map</h2>
-      <p className="map-pricing-label">
-        {pricingSource === "live" ? "Live prices" : "Demo estimated prices"}
-      </p>
+      <p className="map-pricing-label">Demo estimated prices</p>
       <p className="map-hint">
         Pan or zoom the map — station locations update for the area you view (TomTom). ZIP-level
-        prices stay tied to your search ZIP (Apify dataset items from your actor run).
+        demo estimates stay tied to your search ZIP.
       </p>
       {mapAreaBusy && (
         <p className="map-busy" role="status">
@@ -166,7 +163,7 @@ export default function StationMap({
                     Number.isFinite(station.regularPrice) && (
                     <>
                       <br />
-                      {`${pricingSource === "live" ? "Live" : "Demo estimate"}: $${station.regularPrice.toFixed(2)}/gal`}
+                      {`Demo estimate: $${station.regularPrice.toFixed(2)}/gal`}
                     </>
                   )}
                 </Popup>

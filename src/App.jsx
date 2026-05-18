@@ -53,8 +53,8 @@ function App() {
 
   /**
    * Called by the map after the user pans or zooms (debounced in StationMap).
-   * Re-queries TomTom for gas stations near the new map center / radius, then re-applies
-   * Apify dataset prices for the same ZIP (from GET dataset items only).
+   * Re-queries TomTom for gas stations near the new map center / radius, then
+   * generates deterministic demo prices for the same ZIP.
    */
   const handleMapViewportSearch = useCallback(
     async ({ lat, lng, radiusMeters }) => {
@@ -84,8 +84,7 @@ function App() {
         <h1>Yorky Gas Price Agent</h1>
 
         <p className="subtitle">
-          Enter a ZIP for nearby stations (TomTom). Prices use your Apify dataset when available;
-          otherwise you will see demo estimates.
+          Enter a ZIP for nearby stations (TomTom). Prices are demo estimates.
         </p>
 
         <form
@@ -123,26 +122,12 @@ function App() {
           <>
             {/* --- ZIP-level average regular price + how many stations we show --- */}
             <div className="result">
-              <p
-                className={`pricing-banner ${
-                  result.pricingSource === "live"
-                    ? "pricing-banner--live"
-                    : "pricing-banner--demo"
-                }`}
-              >
-                {result.pricingSource === "live" ? (
-                  <strong>Live prices</strong>
-                ) : (
-                  <>
-                    <strong>Demo estimated prices.</strong> Live pricing unavailable for this ZIP,
-                    showing demo estimates. ZIP code <strong>11507</strong> has live pricing—try that ZIP
-                    to see live Apify data.
-                  </>
-                )}
+              <p className="pricing-banner pricing-banner--demo">
+                <strong>Demo estimated prices.</strong> Live pricing unavailable for most zip codes.
+                Showing demo price estimates.
               </p>
               <p>
-                Average regular gas price in <strong>{result.zip}</strong> (
-                {result.pricingSource === "live" ? "live" : "demo estimated"}):
+                Average regular gas price in <strong>{result.zip}</strong> (demo estimated):
               </p>
               <p className="price">
                 {typeof result.averagePrice === "number" && Number.isFinite(result.averagePrice)
@@ -163,7 +148,7 @@ function App() {
                 stations={result.stations}
                 onViewportSearch={handleMapViewportSearch}
                 mapAreaBusy={mapAreaBusy}
-                pricingSource={result.pricingSource ?? "live"}
+                pricingSource="demo"
               />
             )}
 
@@ -171,11 +156,7 @@ function App() {
             <div className="nearby-section">
               <h2 className="nearby-heading">
                 Nearby Gas Stations
-                {result.pricingSource === "live" ? (
-                  <span className="nearby-sub"> — Live prices</span>
-                ) : (
-                  <span className="nearby-sub"> — Demo estimated prices</span>
-                )}
+                <span className="nearby-sub"> — Demo estimated prices</span>
               </h2>
               {!result.stations || result.stations.length === 0 ? (
                 <p className="stations-empty">No nearby stations found.</p>
@@ -193,11 +174,7 @@ function App() {
                       {typeof station.regularPrice === "number" &&
                         Number.isFinite(station.regularPrice) && (
                         <div className="station-price">
-                          {result.pricingSource === "demo" || station.isDemoEstimate ? (
-                            <>Demo estimate: ${station.regularPrice.toFixed(2)} / gal</>
-                          ) : (
-                            <>Live regular: ${station.regularPrice.toFixed(2)} / gal</>
-                          )}
+                          Demo estimate: ${station.regularPrice.toFixed(2)} / gal
                         </div>
                       )}
                     </li>
