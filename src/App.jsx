@@ -13,12 +13,6 @@ function App() {
   const [result, setResult] = useState(null);
   const [mapAreaBusy, setMapAreaBusy] = useState(false);
 
-  const defaultMockResult = {
-    zip: "90210",
-    averagePrice: 4.86,
-    stationCount: 4
-  };
-
   function validateZip(value) {
     return /^\d{5}$/.test(value);
   }
@@ -185,19 +179,6 @@ function App() {
           </>
         )}
 
-        {status === "idle" && (
-          <div className="result">
-            <p>
-              Mock average regular gas price in <strong>{defaultMockResult.zip}</strong>:
-            </p>
-            <p className="price">
-              ${defaultMockResult.averagePrice.toFixed(2)} / gallon
-            </p>
-            <p className="meta">
-              Example preview based on {defaultMockResult.stationCount} mock stations.
-            </p>
-          </div>
-        )}
       </section>
     </main>
   );
